@@ -30,12 +30,12 @@ class Arbol_Evo:
         if esp_ant == 'origen':
             self.hijos.append(Arbol_Evo(esp_new))
             return True
-        
+
         arb_evo = Arbol_Evo.SearchEvolution(esp_ant, self)
-        if arb_evo == None:
-            print("La especie " + esp_ant + " no existe")
+        if arb_evo is None:
+            print(f'La especie {esp_ant} no existe')
             return False
-            
+
         arb_evo.hijos.append(Arbol_Evo(esp_new))
         return True
         

@@ -96,23 +96,13 @@ class Especies():
     def dataDiccGenerator(self):
         
         #cada vez que coma se actualiza esto sumando 1 al elemento que comio
-        self.dataDicc["Food"]={}
-        for food in self.alimentos:
-            self.dataDicc["Food"][food]=0
-        
+        self.dataDicc["Food"] = {food: 0 for food in self.alimentos}
         #se agrega la causa de muerte en forma de tupla con la info relevante de lo que la ocasiono
-        self.dataDicc["Death"]={}
-        for dead in globals.deadTypesList:
-            self.dataDicc["Death"][dead]=0
-        
-        
+        self.dataDicc["Death"] = {dead: 0 for dead in globals.deadTypesList}
         #Zonas por las que mas paso la especie
-        self.dataDicc["Zone"]={}
-        for zone in globals.ZoneList:
-            self.dataDicc["Zone"][zone]=0
-        
+        self.dataDicc["Zone"] = {zone: 0 for zone in globals.ZoneList}
         #fecha de nacimiento
-        self.dataDicc["Born"]=globals.globalTime    
+        self.dataDicc["Born"]=globals.globalTime
         #si se extingue guardamos la fecha de extincion
         self.dataDicc["Extinct"]=None
     
@@ -131,42 +121,30 @@ class Especies():
     
     
     def basicInfoGenerator(individuos):
-        basicInfo={}
         #nombrar la especie
         name=str(int(globals.lastNameSpecie)+1)
         globals.lastNameSpecie+=1
-        basicInfo["name"]=name
-        
-        #dos tipos unicelular y pluricelular
-        basicInfo["Tipo_de_celula"]="unicelular"
-        #por definir, por ahora asexual y sexual entre 2 individuos de distinto sexo
-        basicInfo["Tipo_de_reproduccion"]="asexual"
-        #sexo del indi
-        basicInfo["Cantidad_de_miembros"]=0
-        
-        basicInfo["Canibal"]=True
-
-        
-        basicInfo["Tipo_de_alimentacion"]="element"
-        #sexo del individuo
-        basicInfo["Sexo"]="0"
-        #el ultimo numero para nombrar al siguiente individuo
-        basicInfo["Ultimo_numero"]=str(individuos)
-        
-        
-        return basicInfo
+        return {
+            'name': name,
+            'Tipo_de_celula': 'unicelular',
+            'Tipo_de_reproduccion': 'asexual',
+            'Cantidad_de_miembros': 0,
+            'Canibal': True,
+            'Tipo_de_alimentacion': 'element',
+            'Sexo': '0',
+            'Ultimo_numero': str(individuos),
+        }
     
     def naturalDefenseGenerator():
-        naturalDefense={}
         #vida maxima del individuo
         life=random.randint(20,25)
-        naturalDefense["Vida"]=str(life)
-        #la percepcion no es mas que cuantas casillas sin contar en la que esta es capaz de ver/oir...etc el individuo
-        naturalDefense["Percepcion_de_mundo"]="1"
-        #la inteligencia es un factor que puede influir en varios campos
-        naturalDefense["Inteligencia"]="0"
-        #factor que indica que tan sigiloso puede llegar a ser un individuo en un combate
-        naturalDefense["Sigilo"]=0
+        naturalDefense = {
+            'Vida': str(life),
+            'Percepcion_de_mundo': '1',
+            'Inteligencia': '0',
+            'Sigilo': 0,
+        }
+
         #armadura que indica que tan dura es la piel del individuo
         armor=random.randint(1,4)
         naturalDefense["Armadura"]=str(armor)
@@ -186,11 +164,11 @@ class Especies():
         naturalDefense["Slow_done"]="1"
         #cantidad de casillas que puede recorrer en un dia en el agua
         naturalDefense["Velocidad_agua"]=str(random.randint(10,12))
-        
-        
+
+
         naturalDefense["Edad_de_madurez_sexual_en_dias"]=str(random.randint(10,21))
         naturalDefense["Tiempo_de_gestacion"]=str(random.randint(10,21))
-        
+
         #cuantos hijos por reproduccion puede consebir por reproduccion
         naturalDefense["Tiempo_entre_reproducccion"]="5"
         naturalDefense["Tiempo_de_vida_en_dias"]=str(random.randint(50,101))
@@ -204,12 +182,11 @@ class Especies():
         naturalDefense["Cantidad_de_energia_almacenable"]=1+(life/5)*3
         #cantidad de energia almacenada a partir de la cual le da hambre
         naturalDefense["Nivel_de_Hambre"]=1+2*life/3
-        
+
         return naturalDefense
         
     def resistenciasElementalesGenerator():
-        resistenciasElementales={}
-        return resistenciasElementales
+        return {}
     
     def foodListGenerator(self):
         
@@ -220,59 +197,57 @@ class Especies():
     #metodo para evolucionar una especie
     def evolve(self,paramsDic):
         #se reciben todos los parametros en el dic
-        father=paramsDic["EspeciePadre"] 
+        father=paramsDic["EspeciePadre"]
         self.basicInfo= copy.deepcopy(father.basicInfo)
         self.basicInfo["Cantidad_de_miembros"]=0
         self.basicInfo["Ultimo_numero"]=paramsDic["Individuos"]
-        
+
         self.naturalDefense=paramsDic["Promedio"]
         self.resistenciaElemental=copy.deepcopy(father.resistenciaElemental)
         self.alimentos=copy.deepcopy(father.alimentos)
         self.nextName=paramsDic["Individuos"]
 
 
-        
+
         #revisando si se agrega el elemento a los comestibles o se elimina alguno existente
         if int(father.naturalDefense["Vida"])>int(self.naturalDefense["Vida"]):
             self.removeFood()
         if int(father.naturalDefense["Vida"])<int(self.naturalDefense["Vida"]):
             self.addFood(paramsDic["Elemento"])
-            
+
         self.dataDicc={}
         self.dataDiccGenerator()
-        
+
         self.basicInfo["name"]=int(globals.lastNameSpecie)
         globals.lastNameSpecie=int(globals.lastNameSpecie)+1
-        
+
         globals.waitSpeciesList.append((str(self.basicInfo["name"]),self))
-        
+
         #chance de evolucionar a pluricelular
         if self.basicInfo["Tipo_de_celula"]=="unicelular":
             tempRandom=random.randint(0,100)
             if tempRandom>50:
                 print("La especie "+str(self.basicInfo["name"])+" es pluricelular")   
                 self.basicInfo["Tipo_de_celula"]="pluricelular"
-                
+
         if self.basicInfo["Tipo_de_celula"]=="unicelular":
             tempRandom=random.randint(0,100)
             if tempRandom>60:
-                print("La especie "+str(self.basicInfo["name"])+" es canibal")   
-                self.basicInfo["Canibal"]=True
+                print("La especie "+str(self.basicInfo["name"])+" es canibal")
             else:
-                print("La especie "+str(self.basicInfo["name"])+" es pluricelular")   
-                self.basicInfo["Canibal"]=True
-        
+                print("La especie "+str(self.basicInfo["name"])+" es pluricelular")
+            self.basicInfo["Canibal"]=True
         #chance de evolucionar a reproduccion sexual
         if self.basicInfo["Tipo_de_reproduccion"]=="asexual" and self.basicInfo["Tipo_de_celula"]=="pluricelular":
             tempRandom=random.randint(0,100)
             if tempRandom>70:
                 self.basicInfo["Tipo_de_reproduccion"]="sexual"        
                 print("La especie "+str(self.basicInfo["name"])+" tiene reproduccion sexual")
-        
+
         #varianza de las especies
         varianza=paramsDic["Varianza"]
-        
-        
+
+
         self.individuos=self.listaIndividuosGenerator(paramsDic["x"] ,paramsDic["y"],paramsDic["Individuos"],varianza)
         
         #print("a")

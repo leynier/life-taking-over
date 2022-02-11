@@ -23,22 +23,20 @@ class Tile:
     def deleteCreaturesEspecies(self, Creatures , Especie):
         tempCount = Creatures
         for j in self.CreatureList:
-            if tempCount <= 0:
-                pass
-            else:
-                if j.especie == Especie:
-                    j.die("Evolving")
-                    tempCount = tempCount -1
+            if tempCount > 0 and j.especie == Especie:
+                j.die("Evolving")
+                tempCount = tempCount -1
                     
     
     def eliminate(self,elementTuple):
-        if elementTuple[0] == 'Solar Light' or elementTuple[0] == 'Water':
+        if elementTuple[0] in ['Solar Light', 'Water']:
             return
-        
+
         else:
             self.ComponentsDict[elementTuple[0]] = self.ComponentsDict[elementTuple[0]] - elementTuple[1]
-        if self.ComponentsDict[elementTuple[0]] < 0:
-            self.ComponentsDict[elementTuple[0]] = 0
+        self.ComponentsDict[elementTuple[0]] = max(
+            self.ComponentsDict[elementTuple[0]], 0
+        )
 
     def createPrairieTile(self):
         for component in globals.PrairieGenerationList.items():

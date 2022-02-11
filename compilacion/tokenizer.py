@@ -31,14 +31,13 @@ def readOperator(chain,currentPos,mytokens,line,column):
     tempOperator=currentToken
     while currentPos<len(chain):
         tempOperator+=chain[currentPos]
-        if tempOperator in compGlobals.operatorsDicc:
-            currentPos+=1
-            currentToken=tempOperator
-        else:
+        if tempOperator not in compGlobals.operatorsDicc:
             break
+        currentPos+=1
+        currentToken=tempOperator
     tempType=compGlobals.operatorsDicc[currentToken]
     mytokens.append(tokens.Token(tempType,line,column))
-    
+
     return currentPos
 
 def readString(chain,currentPos,mytokens,line,column):

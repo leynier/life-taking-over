@@ -11,5 +11,10 @@ class CompError():
         
         
     def __repr__(self) -> str:
-        tempErrorString=str(self.text)+ " in line: " +str(self.line)+" in column: "+str(self.column)
-        return tempErrorString
+        return (
+            str(self.text)
+            + " in line: "
+            + str(self.line)
+            + " in column: "
+            + str(self.column)
+        )
